@@ -26,8 +26,8 @@ async def main():
                 logger.info(f"{trap.name} | CLEAR | Last Checked: {trap.trapstatistics.last_report_date}")
 
         if trapped is True:
-            string = await pause_flow_run(timeout=5)
-            logger.info(f"Some thing... {string}")
+            await pause_flow_run(timeout=20_000)
+            logger.info("CAUGHT MOUSE.")
         else:
             logger.info("No mice this time...")
             
