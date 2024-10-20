@@ -19,7 +19,7 @@ async def main():
 
         trapped = False
         for trap in traps:
-            if trap.trapstatistics.kills_present == 1:
+            if trap.trapstatistics.kills_present == 0:
                 logger.error(f"{trap.name} | TRIPPED | When Tripped: {trap.trapstatistics.last_kill_date}")
                 trapped = True
             else:
