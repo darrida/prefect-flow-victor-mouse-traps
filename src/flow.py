@@ -1,23 +1,33 @@
-from pprint import pprint
+import asyncio
 
-from prefect import flow, task
+from prefect import flow, get_run_logger, pause_flow_run
 from prefect.blocks.system import Secret
 from victor_mouse_trap import VictorApi, VictorAsyncClient
 
 
 @flow(name="victor-trap-status")
 async def main():
-    username = Secret.load("victor_username")
-    password = Secret.load("victor_password")
+    logger = get_run_logger()
+
+    username = await Secret.load("victor-username")
+    password = await Secret.load("victor-password")
 
     async with VictorAsyncClient(username.get(), password.get()) as client:
         api = VictorApi(client)
         traps = await api.get_traps()
-        for t in traps:
-            pprint(t.model_dump())
-            pprint(t.trapstatistics.model_dump())
-        # return
-        # d = await api.get_trap_history(trap_id=143485)
-        # for x in d:
-        #     print(x.time_stamp, x.activity_type_text)
-    
+
+        trapped = False
+        for trap in traps:
+            if trap.trapstatistics.kills_present == 1:
+                logger.error(f"{trap.name} | Tripped: {True if trap.trapstatistics.kills_present == 1 else False} | Last Tripped: {trap.trapstatistics.last_kill_date}")
+                trapped = True
+
+        if trapped is True:
+            string = await pause_flow_run(wait_for_input=str, timeout=21_600)
+            logger.info(f"Some thing... {string}")
+        else:
+            logger.info("No mice this time...")
+            
+
+if __name__ == "__main__":
+    asyncio.run(main())
