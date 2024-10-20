@@ -1,6 +1,6 @@
 import asyncio
 
-from prefect import flow, get_run_logger, pause_flow_run
+from prefect import flow, get_run_logger, pause_flow_run, suspend_flow_run
 from prefect.blocks.system import Secret
 
 from victor_mouse_trap import VictorApi, VictorAsyncClient
@@ -26,7 +26,7 @@ async def main():
                 logger.info(f"{trap.name} | CLEAR | Last Checked: {trap.trapstatistics.last_report_date}")
 
         if trapped is True:
-            string = await pause_flow_run(timeout=21_600)
+            string = await suspend_flow_run(timeout=None)
             logger.info(f"Some thing... {string}")
         else:
             logger.info("No mice this time...")
