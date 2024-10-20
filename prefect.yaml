@@ -7,9 +7,9 @@ name: prefect-flow-victor-mouse-traps
 prefect-version: 3.0.10
 
 # build section allows you to manage and build docker images
-build:
-- prefect_docker.deployments.steps.build_docker_image:
-  dockerfile: auto
+build: null
+# - prefect_docker.deployments.steps.build_docker_image:
+#   dockerfile: auto
 
 # push section allows you to manage if and how this project is uploaded to remote locations
 push: null
@@ -32,7 +32,8 @@ deployments:
   work_pool:
     name: Production
     work_queue_name: null
-    job_variables: {}
+    job_variables: 
+      pip-packages: ["prefect>=3.0.10", "dependencies/victor_mouse_trap-2024.10.19-py3-none-any.whl"]
   enforce_parameter_schema: true
   schedules:
   - interval: 3600.0
