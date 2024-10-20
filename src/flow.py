@@ -2,6 +2,7 @@ import asyncio
 
 from prefect import flow, get_run_logger, pause_flow_run
 from prefect.blocks.system import Secret
+
 from victor_mouse_trap import VictorApi, VictorAsyncClient
 
 
@@ -9,8 +10,8 @@ from victor_mouse_trap import VictorApi, VictorAsyncClient
 async def main():
     logger = get_run_logger()
 
-    username = await Secret.load("victor-username")
-    password = await Secret.load("victor-password")
+    username: Secret = await Secret.load("victor-username")
+    password: Secret = await Secret.load("victor-password")
 
     async with VictorAsyncClient(username.get(), password.get()) as client:
         api = VictorApi(client)
@@ -19,8 +20,10 @@ async def main():
         trapped = False
         for trap in traps:
             if trap.trapstatistics.kills_present == 1:
-                logger.error(f"{trap.name} | Tripped: {True if trap.trapstatistics.kills_present == 1 else False} | Last Tripped: {trap.trapstatistics.last_kill_date}")
+                logger.error(f"{trap.name} | TRIPPED | When Tripped: {trap.trapstatistics.last_kill_date}")
                 trapped = True
+            else:
+                logger.info(f"{trap.name} | CLEAR | Last Checked: {trap.trapstatistics.last_report_date}")
 
         if trapped is True:
             string = await pause_flow_run(wait_for_input=str, timeout=21_600)
