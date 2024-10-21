@@ -20,10 +20,10 @@ async def main():
         trapped = False
         for trap in traps:
             if trap.trapstatistics.kills_present == 1:
-                logger.error(f"{trap.name} | TRIPPED | When Tripped: {trap.trapstatistics.last_kill_date}")
+                logger.error(f"{trap.name} | TRIPPED | When Tripped: {trap.trapstatistics.last_kill_date} | battery: {trap.trapstatistics.battery_level}")
                 trapped = True
             else:
-                logger.info(f"{trap.name} | CLEAR | Last Checked: {trap.trapstatistics.last_report_date}")
+                logger.info(f"{trap.name} | CLEAR | Last Checked: {trap.trapstatistics.last_report_date}| battery: {trap.trapstatistics.battery_level}")
 
         if trapped is True:
             await pause_flow_run(timeout=20_000)
